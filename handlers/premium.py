@@ -29,7 +29,7 @@ async def cmd_premium(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     banner = os.path.join(ASSETS_DIR, "premium_banner.jpg")
     if os.path.isfile(banner):
         with open(banner, "rb") as f:
-            await update.message.reply_photo(photo=f)
+            await update.effective_message.reply_photo(photo=f)
 
     if prem:
         info = get_premium_info(user.id)
@@ -48,7 +48,7 @@ async def cmd_premium(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
         )
         if expires:
             text += f"• Действует {expires}"
-        await update.message.reply_text(text, parse_mode="Markdown")
+        await update.effective_message.reply_text(text, parse_mode="Markdown")
         return
 
     text = (
@@ -65,7 +65,7 @@ async def cmd_premium(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
         "⭐ **25** — Premium на месяц\n\n"
         "Нажми кнопку ниже, чтобы купить 👇"
     )
-    await update.message.reply_text(text, parse_mode="Markdown")
+    await update.effective_message.reply_text(text, parse_mode="Markdown")
     await _show_buy_buttons(update, context)
 
 
@@ -91,7 +91,7 @@ async def _show_buy_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         ],
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text(
+    await update.effective_message.reply_text(
         "💎 Выбери тариф:",
         reply_markup=reply_markup,
     )

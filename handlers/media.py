@@ -134,6 +134,11 @@ async def handle_link(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
 
     status = await update.message.reply_text("⏬ Скачиваю...")
 
+    if not prem:
+        await update.message.reply_text(
+            "💎 **Premium** — безлимит, максимальное качество, без очереди\n→ /buy"
+        )
+
     result: Optional[dict] = None
     source_name = ""
 
@@ -205,53 +210,23 @@ async def handle_link(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     except Exception:
         pass
 
-    # --- SEND ---
+    # --- SEND all content as Document (no compression) ---
     kval = "оригинал" if prem else f"до 720p"
 
-    if file_type == "video":
-        # 1 — sendVideo (preview with player)
-        await status.edit_text(f"{source_name} | отправляю превью...")
-        try:
-            with open(filepath, "rb") as f:
-                await update.message.reply_video(
-                    video=InputFile(f, filename=filename),
-                    caption=f"🎬 {filename}",
-                    supports_streaming=True,
-                )
-        except Exception:
-            logger.exception("sendVideo failed, falling back to document")
-
-        # 2 — sendDocument (original file, no compression)
-        await status.edit_text(f"{source_name} | отправляю файл...")
-        try:
-            with open(filepath, "rb") as f:
-                await update.message.reply_document(
-                    document=InputFile(f, filename=filename),
-                    caption=f"📁 {filename} ({kval})",
-                )
-        except Exception:
-            logger.exception("sendDocument failed")
-            await status.edit_text("❌ Ошибка при отправке файла")
-            _safe_delete(filepath)
-            if not prem:
-                set_downloading(user.id, False)
-            return
-    else:
-        # photo — just document (no compression)
-        await status.edit_text(f"{source_name} | отправляю...")
-        try:
-            with open(filepath, "rb") as f:
-                await update.message.reply_document(
-                    document=InputFile(f, filename=filename),
-                    caption=f"📁 {filename} ({kval})",
-                )
-        except Exception:
-            logger.exception("Upload failed")
-            await status.edit_text("❌ Ошибка при отправке")
-            _safe_delete(filepath)
-            if not prem:
-                set_downloading(user.id, False)
-            return
+    await status.edit_text(f"{source_name} | отправляю файл...")
+    try:
+        with open(filepath, "rb") as f:
+            await update.message.reply_document(
+                document=InputFile(f, filename=filename),
+                caption=f"📁 {filename} ({kval})",
+            )
+    except Exception:
+        logger.exception("Upload failed")
+        await status.edit_text("❌ Ошибка при отправке")
+        _safe_delete(filepath)
+        if not prem:
+            set_downloading(user.id, False)
+        return
 
     await status.delete()
 

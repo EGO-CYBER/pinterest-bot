@@ -32,7 +32,7 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         ],
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=reply_markup)
+    await update.effective_message.reply_text(text, parse_mode="Markdown", reply_markup=reply_markup)
 
 
 async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -72,15 +72,16 @@ async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         ],
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=reply_markup)
+    await update.effective_message.reply_text(text, parse_mode="Markdown", reply_markup=reply_markup)
 
 
 async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
     await query.answer()
-
     data = query.data
+
     if data == "btn_premium":
+        from handlers.premium import cmd_premium
         await cmd_premium(update, context)
     elif data == "btn_help":
         await cmd_help(update, context)

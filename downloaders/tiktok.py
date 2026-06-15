@@ -66,6 +66,8 @@ async def _try_ytdlp(url: str, max_height: Optional[int] = None) -> Optional[dic
             "no_warnings": True,
             "noplaylist": True,
             "retries": 3,
+            "outtmpl": outtmpl,
+            "merge_output_format": "mp4",
             "http_headers": {
                 **HEADERS,
                 "Referer": "https://www.tiktok.com/",
